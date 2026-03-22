@@ -5,25 +5,62 @@
     <title>{{siteName}} - 管理后台</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- ===== 第三方库 ===== -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
 
-    <!-- ===== 自定义样式 ===== -->
     <style>
-        body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:#f8f9fa;}
-        .site-header{background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.05);}
-        .site-logo img{height:40px;}
-        .sidebar{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:1rem;margin-top:1rem;}
-        .tab-content{background:#fff;padding:1.5rem;border:1px solid #dee2e6;border-top:none;}
-        .badge-top{background:#ff5722;color:#fff;}
-        .badge-hidden{background:#d84315;color:#fff;}
-        .article-list .list-group-item{border:none;padding:.75rem 1rem;}
-        .article-list .list-group-item:hover{background:#f1f3f5;}
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .site-header {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .site-logo img { height: 40px; }
+        .sidebar {
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .tab-content {
+            background: #fff;
+            padding: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 1rem 1rem;
+        }
+        .badge-top {
+            background: #ff5722;
+            color: #fff;
+        }
+        .badge-hidden {
+            background: #d84315;
+            color: #fff;
+        }
+        .article-list .list-group-item {
+            border: none;
+            padding: .75rem 1rem;
+            background: transparent;
+        }
+        .article-list .list-group-item:hover {
+            background: #f1f3f5;
+        }
+        .filter-btn.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .editormd {
+            border-radius: 0.75rem;
+        }
+        .form-label i {
+            width: 1.5rem;
+            color: #6c757d;
+        }
     </style>
 
-    <!-- 这里会把您在 Workers 中 OPT.codeBeforHead 里写的代码注入（例如 jQuery、top_flag 样式等） -->
     {{#OPT.codeBeforHead}}{{.}}{{/OPT.codeBeforHead}}
 </head>
 
@@ -35,8 +72,7 @@
             <img src="{{logo}}" alt="{{siteName}}">
             <span class="ms-2 h5 text-dark mb-0">{{siteName}} 管理后台</span>
         </a>
-        <button class="navbar-toggler border-0 d-md-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#mobileNav"><i class="fas fa-bars fa-lg"></i></button>
+        <button class="navbar-toggler border-0 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav"><i class="fas fa-bars fa-lg"></i></button>
     </div>
 
     <div class="collapse d-md-block" id="mobileNav">
@@ -50,16 +86,21 @@
 </header>
 
 <div class="container">
-
     <div class="tab-content">
-
-        <!-- ==================== 我的文章 ==================== -->
+        <!-- 我的文章 -->
         <div class="tab-pane fade show active" id="tab-articles">
             <h4 class="mb-3"><i class="fas fa-list"></i> 文章列表</h4>
 
+            <div class="mb-3">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary filter-btn active" data-filter="all">全部</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="top">置顶</button>
+                    <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="hidden">隐藏</button>
+                </div>
+            </div>
+
             <div class="article-list">
                 <ul class="list-group" id="articleList">
-                    <!-- 列表在后台 JS 中通过 Ajax 动态加载 -->
                     <li class="list-group-item text-center text-muted">加载中…</li>
                 </ul>
             </div>
@@ -70,47 +111,48 @@
             </nav>
         </div>
 
-        <!-- ==================== 新建文章 ==================== -->
+        <!-- 新建文章 -->
         <div class="tab-pane fade" id="tab-new">
             <h4 class="mb-3"><i class="fas fa-plus-circle"></i> 新建文章</h4>
 
             <form id="addNewForm">
                 <div class="mb-3">
-                    <label class="form-label">标题</label>
+                    <label class="form-label"><i class="fas fa-heading"></i> 标题</label>
                     <input type="text" class="form-control" name="title" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">封面图（可选）</label>
+                    <label class="form-label"><i class="fas fa-image"></i> 封面图（可选）</label>
                     <input type="url" class="form-control" name="img">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">永久链接（slug）</label>
+                    <label class="form-label"><i class="fas fa-link"></i> 永久链接（slug）</label>
                     <input type="text" class="form-control" name="link" placeholder="如：my-first-post">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">发布时间</label>
+                    <label class="form-label"><i class="far fa-calendar-alt"></i> 发布时间</label>
                     <input type="datetime-local" class="form-control" name="createDate" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">分类（可多选）</label>
+                    <label class="form-label"><i class="fas fa-folder"></i> 分类（可多选）</label>
                     <select class="form-select" name="category" multiple required>
                         {{#widgetCategoryList}}
                         <option value="{{.}}">{{.}}</option>
                         {{/widgetCategoryList}}
                     </select>
+                    <small class="text-muted">按住 Ctrl 或 ⌘ 键多选</small>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">标签（逗号分隔）</label>
+                    <label class="form-label"><i class="fas fa-tags"></i> 标签（逗号分隔）</label>
                     <input type="text" class="form-control" name="tags" placeholder="tag1, tag2">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">置顶状态</label>
+                    <label class="form-label"><i class="fas fa-thumbtack"></i> 置顶状态</label>
                     <select class="form-select" name="istop">
                         <option value="0" selected>否</option>
                         <option value="1">是</option>
@@ -118,7 +160,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">隐藏状态</label>
+                    <label class="form-label"><i class="fas fa-eye-slash"></i> 隐藏状态</label>
                     <select class="form-select" name="hidden">
                         <option value="0" selected>否</option>
                         <option value="1">是</option>
@@ -126,12 +168,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">SEO 权重（priority）</label>
+                    <label class="form-label"><i class="fas fa-chart-line"></i> SEO 权重（priority）</label>
                     <input type="number" step="0.1" min="0" max="1" class="form-control" name="priority" value="0.5">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">更新频率（changefreq）</label>
+                    <label class="form-label"><i class="fas fa-sync-alt"></i> 更新频率（changefreq）</label>
                     <select class="form-select" name="changefreq">
                         <option>always</option>
                         <option>hourly</option>
@@ -143,9 +185,8 @@
                     </select>
                 </div>
 
-                <!-- Markdown 编辑器占位，后台会在 JS 中自动注入 editormd -->
                 <div class="mb-3">
-                    <label class="form-label">文章内容（Markdown）</label>
+                    <label class="form-label"><i class="fab fa-markdown"></i> 文章内容（Markdown）</label>
                     <textarea name="content-markdown-doc" id="mdEditor" style="height:300px;"></textarea>
                 </div>
 
@@ -153,40 +194,39 @@
             </form>
         </div>
 
-        <!-- ==================== 站点设置 ==================== -->
+        <!-- 站点设置 -->
         <div class="tab-pane fade" id="tab-settings">
             <h4 class="mb-3"><i class="fas fa-cog"></i> 站点设置</h4>
 
             <form id="settingForm">
                 <div class="row">
-
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">站点名称</label>
+                        <label class="form-label"><i class="fas fa-globe"></i> 站点名称</label>
                         <input type="text" class="form-control" name="siteName" value="{{siteName}}" required>
+                        <small class="text-muted">显示在页面标题和导航栏</small>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">站点域名（不带 http）</label>
+                        <label class="form-label"><i class="fas fa-link"></i> 站点域名（不带 http）</label>
                         <input type="text" class="form-control" name="siteDomain" value="{{siteDomain}}" required>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">站点描述</label>
+                        <label class="form-label"><i class="fas fa-info-circle"></i> 站点描述</label>
                         <textarea class="form-control" name="siteDescription" rows="2">{{siteDescription}}</textarea>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">主题 URL（CDN）</label>
+                        <label class="form-label"><i class="fas fa-palette"></i> 主题 URL（CDN）</label>
                         <input type="url" class="form-control" name="themeURL" value="{{themeURL}}">
                     </div>
-
                 </div>
 
                 <button type="submit" class="btn btn-success"><i class="fas fa-check me-1"></i> 保存设置</button>
             </form>
         </div>
 
-        <!-- ==================== 发布 / 导出 ==================== -->
+        <!-- 发布/导出 -->
         <div class="tab-pane fade" id="tab-publish">
             <h4 class="mb-3"><i class="fas fa-cloud-upload-alt"></i> 发布 & 导出</h4>
 
@@ -197,7 +237,6 @@
                 <a class="btn btn-outline-warning" href="/admin/sitemap.xml" id="btnExportSitemap"><i class="fas fa-sitemap me-1"></i> 导出 sitemap.xml</a>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -207,95 +246,93 @@
     </div>
 </footer>
 
-<!-- ===== 第三方脚本 ===== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-/* -------------------------------------------------
-   下面是后台页面的核心交互（基于 jQuery + Mustache）
-   只要保持文件结构不动，您无需在 Workers 里改代码
---------------------------------------------------- */
+    // ---------- 文章列表分页加载 ----------
+    let curPage = 1;
+    const pageSize = 20;
 
-/* ---------- 读取全局配置（ajax） ---------- */
-function loadGlobalConfig(){
-    // 这里直接在 Worker 渲染时已经把所有全局变量注入到模板，
-    // 所以不需要额外的 ajax。若要动态刷新，可自行调用
-}
+    function loadArticleList(page) {
+        $.getJSON(`/admin/getList/${page}`).done(data => {
+            const $ul = $('#articleList');
+            $ul.empty();
+            if (data.length === 0) {
+                $ul.append('<li class="list-group-item text-muted">暂无文章</li>');
+            } else {
+                data.forEach(item => {
+                    const badgeTop = item.top_timestamp ? '<span class="badge badge-top me-1">置顶</span>' : '';
+                    const badgeHide = item.hidden ? '<span class="badge badge-hidden me-1">隐藏</span>' : '';
+                    const $li = $(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center" data-top="${!!item.top_timestamp}" data-hidden="${!!item.hidden}">
+                            <div>${badgeTop}${badgeHide}<a href="/admin/edit/${item.id}" class="text-decoration-none">${item.title}</a></div>
+                            <small class="text-muted">${item.createDate10}</small>
+                        </li>
+                    `);
+                    $ul.append($li);
+                });
+            }
+            $('#prevPageBtn').prop('disabled', page <= 1);
+            $('#nextPageBtn').prop('disabled', data.length < pageSize);
+        }).fail(() => alert('读取文章列表失败'));
+    }
 
-/* ---------- 文章列表分页加载 ---------- */
-let curPage = 1;
-const pageSize = 20;   // 与 Workers 中默认保持一致
+    $('#prevPageBtn').on('click', () => { if (curPage > 1) { curPage--; loadArticleList(curPage); } });
+    $('#nextPageBtn').on('click', () => { curPage++; loadArticleList(curPage); });
+    loadArticleList(curPage);
 
-function loadArticleList(page){
-    $.getJSON(`/admin/getList/${page}`).done(data=>{
-        const list = data;   // data 已经是数组
-        const $ul = $('#articleList');
-        $ul.empty();
-        if(list.length===0){
-            $ul.append('<li class="list-group-item text-muted">暂无文章</li>');
-        }else{
-            list.forEach(item=>{
-                const badgeTop   = item.top_timestamp ? '<span class="badge badge-top me-1">置顶</span>' : '';
-                const badgeHide  = item.hidden ? '<span class="badge badge-hidden me-1">隐藏</span>' : '';
-                const $li = $(`
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            ${badgeTop}${badgeHide}
-                            <a href="/admin/edit/${item.id}" class="text-decoration-none">${item.title}</a>
-                        </div>
-                        <small class="text-muted">${item.createDate10}</small>
-                    </li>
-                `);
-                $ul.append($li);
-            });
-        }
-        // 按需显示分页按钮
-        $('#prevPageBtn').prop('disabled', page<=1);
-        $('#nextPageBtn').prop('disabled', list.length < pageSize);
-    }).fail(()=>alert('读取文章列表失败'));
-}
-
-$('#prevPageBtn').on('click',()=>{ if(curPage>1){ curPage--; loadArticleList(curPage);} });
-$('#nextPageBtn').on('click',()=>{ curPage++; loadArticleList(curPage);} );
-loadArticleList(curPage);
-
-/* ---------- 新建文章提交 ---------- */
-$('#addNewForm').on('submit',function(e){
-    e.preventDefault();
-    const formData = new FormData(this);
-    // 必须把 Markdown 编辑器的内容放进 formData（后端通过 name="content-markdown-doc" 取到）
-    formData.append('content-markdown-doc',$('#mdEditor').val());
-    $.ajax({
-        url:'/admin/saveAddNew',
-        method:'POST',
-        data: formData,
-        processData:false,
-        contentType:false,
-        success: r=>{ alert('文章已保存'); location.reload();}
+    // 文章列表筛选（本地）
+    $('.filter-btn').on('click', function() {
+        const filter = $(this).data('filter');
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+        $('#articleList li').each(function() {
+            const $li = $(this);
+            if (filter === 'all') {
+                $li.show();
+            } else if (filter === 'top') {
+                $li.data('top') ? $li.show() : $li.hide();
+            } else if (filter === 'hidden') {
+                $li.data('hidden') ? $li.show() : $li.hide();
+            }
+        });
     });
-});
 
-/* ---------- 编辑页面（后台点击“编辑”后跳转） ---------- */
-if(window.location.pathname.startsWith('/admin/edit/')){
-    const id = window.location.pathname.split('/').pop();
-    $.getJSON(`/admin/edit/${id}`).done(html=>{ document.open();document.write(html); document.close(); });
-}
-
-/* ---------- 站点设置保存 ---------- */
-$('#settingForm').on('submit',function(e){
-    e.preventDefault();
-    const data = $(this).serializeArray().reduce((obj, item)=>{ obj[item.name]=item.value; return obj; }, {});
-    $.ajax({
-        url:'/admin/saveConfig',
-        method:'POST',
-        contentType:'application/json',
-        data: JSON.stringify(data),
-        success:()=>{ alert('配置已保存'); location.reload();}
+    // ---------- 新建文章提交 ----------
+    $('#addNewForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.append('content-markdown-doc', $('#mdEditor').val());
+        $.ajax({
+            url: '/admin/saveAddNew',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: r => { alert('文章已保存'); location.reload(); }
+        });
     });
-});
 
-/* ---------- 发布/导出按钮 ---------- */
-$('#btnPublish').on('click',()=>$.getJSON('/admin/publish').done(r=>alert(r.msg)));
+    // ---------- 站点设置保存 ----------
+    $('#settingForm').on('submit', function(e) {
+        e.preventDefault();
+        const data = $(this).serializeArray().reduce((obj, item) => { obj[item.name] = item.value; return obj; }, {});
+        $.ajax({
+            url: '/admin/saveConfig',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: () => { alert('配置已保存'); location.reload(); }
+        });
+    });
+
+    // ---------- 发布/导出 ----------
+    $('#btnPublish').on('click', () => $.getJSON('/admin/publish').done(r => alert(r.msg)).fail(() => alert('发布失败')));
+
+    // ---------- 编辑页面（如果当前 URL 是编辑） ----------
+    if (window.location.pathname.startsWith('/admin/edit/')) {
+        const id = window.location.pathname.split('/').pop();
+        $.getJSON(`/admin/edit/${id}`).done(html => { document.open(); document.write(html); document.close(); });
+    }
 </script>
 
 {{#OPT.codeBeforBody}}{{.}}{{/OPT.codeBeforBody}}
