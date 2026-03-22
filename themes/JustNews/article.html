@@ -1,32 +1,95 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 基础信息 -->
     <meta charset="UTF-8">
     <title>{{title}}</title>
     <meta name="keywords" content="{{keyWords}}">
     <meta name="description" content="{{articleSingle.title}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- ==================== Open Graph / Twitter Card ==================== -->
+    <meta property="og:title"          content="{{articleSingle.title}}">
+    <meta property="og:description"    content="{{articleSingle.title}}">
+    <meta property="og:type"           content="article">
+    <meta property="og:url"            content="https://{{siteDomain}}/article/{{articleSingle.id}}/{{articleSingle.link}}.html">
+    <meta property="og:image"          content="{{articleSingle.img}}">
+    <meta property="og:site_name"       content="{{siteName}}">
+    <meta name="twitter:card"          content="summary_large_image">
+    <meta name="twitter:title"         content="{{articleSingle.title}}">
+    <meta name="twitter:description"   content="{{articleSingle.title}}">
+    <meta name="twitter:image"          content="{{articleSingle.img}}">
+
+    <!-- JSON‑LD 结构化数据（可帮助搜索引擎展示摘要） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://{{siteDomain}}/article/{{articleSingle.id}}/{{articleSingle.link}}.html"
+      },
+      "headline": "{{articleSingle.title}}",
+      "image": "{{articleSingle.img}}",
+      "author": {
+        "@type": "Person",
+        "name": "{{siteName}}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "{{siteName}}",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{logo}}"
+        }
+      },
+      "datePublished": "{{articleSingle.createDate}}",
+      "dateModified": "{{articleSingle.modify_timestamp}}",
+      "description": "{{articleSingle.title}}"
+    }
+    </script>
+
     <!-- ==================== 第三方库（CDN） ==================== -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
-
-    <!-- ==================== 站点全局自定义样式 ==================== -->
+    <!-- 代码高亮（Prism） -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
+        /* ---------- 基础排版 ---------- */
         body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:#fafafa;}
         .site-header{background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.05);}
         .site-logo img{height:45px;}
         .article-header{margin-bottom:2rem;}
-        .article-header h1{font-size:2rem;}
+        .article-header h1{font-size:2rem;word-break:break-all;}
         .article-meta{color:#777;font-size:.9rem;}
-        .article-content img{max-width:100%;height:auto;margin:1rem 0;}
+        .article-content img{max-width:100%;height:auto;margin:1rem 0;border-radius:4px;}
+        .article-content pre{background:#2d2d2d;border-radius:4px;overflow:auto;padding:1rem;}
+        .article-content code{background:#f5f5f5;padding:0.2rem 0.4rem;border-radius:3px;}
         .toc{margin-bottom:1.5rem;}
         .toc a{text-decoration:none;color:#555;}
         .toc a:hover{color:#000;}
         .sidebar{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:1rem;margin-bottom:2rem;}
         .footer{background:#222;color:#fff;padding:2rem 0;text-align:center;}
+
+        /* ---------- 代码块复制按钮 ---------- */
+        .copy-btn{
+            position:absolute;right:0.8rem;top:0.8rem;background:#666;
+            color:#fff;border:none;border-radius:3px;padding:0.2rem 0.5rem;
+            font-size:0.75rem;cursor:pointer;opacity:0.7;
+        }
+        .copy-btn:hover{opacity:1;}
+
+        /* ---------- 返回顶部按钮 ---------- */
+        #backToTop{
+            position:fixed;right:1.5rem;bottom:1.5rem;
+            width:45px;height:45px;background:#007bff;color:#fff;
+            border-radius:50%;display:none;align-items:center;justify-content:center;
+            cursor:pointer;z-index:999;
+        }
+        #backToTop i{font-size:1.2rem;}
     </style>
 
+    <!-- 其它自定义 head 代码（如统计、广告等） -->
     {{#OPT.codeBeforHead}}{{.}}{{/OPT.codeBeforHead}}
 </head>
 
@@ -39,6 +102,7 @@
             <span class="ms-2 h5 text-dark mb-0">{{siteName}}</span>
         </a>
 
+        <!-- PC 端导航 -->
         <nav class="d-none d-md-block">
             <ul class="nav">
                 {{#widgetMenuList}}
@@ -47,12 +111,14 @@
             </ul>
         </nav>
 
+        <!-- Mobile 折叠菜单按钮 -->
         <button class="navbar-toggler d-md-none border-0"
                 type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
             <i class="fas fa-bars fa-lg"></i>
         </button>
     </div>
 
+    <!-- Mobile 折叠菜单 -->
     <div class="collapse" id="mobileNav">
         <ul class="nav flex-column bg-white p-3">
             {{#widgetMenuList}}
@@ -68,6 +134,17 @@
         <!-- ==================== 文章主体 ==================== -->
         <article class="col-lg-8">
 
+            <!-- 面包屑（可选） -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">首页</a></li>
+                    {{#articleSingle.category}}
+                    <li class="breadcrumb-item"><a href="/category/{{.}}/page/1">{{.}}</a></li>
+                    {{/articleSingle.category}}
+                    <li class="breadcrumb-item active" aria-current="page">{{articleSingle.title}}</li>
+                </ol>
+            </nav>
+
             <header class="article-header">
                 <h1 class="mb-3">{{articleSingle.title}}</h1>
 
@@ -81,8 +158,10 @@
 
                 <p class="article-meta mb-0">
                     <i class="far fa-calendar-alt me-1"></i> {{articleSingle.createDate10}}
-                    <i class="far fa-folder-open ms-3 me-1"></i> {{#articleSingle.category}}{{.}} {{/articleSingle.category}}
-                    <i class="far fa-tags ms-3 me-1"></i> {{#articleSingle.tags}}{{.}} {{/articleSingle.tags}}
+                    <i class="far fa-folder-open ms-3 me-1"></i>
+                    {{#articleSingle.category}}{{.}} {{/articleSingle.category}}
+                    <i class="far fa-tags ms-3 me-1"></i>
+                    {{#articleSingle.tags}}{{.}} {{/articleSingle.tags}}
                 </p>
             </header>
 
@@ -90,12 +169,27 @@
             {{#articleSingle.toc}}
             <nav class="toc card card-body mb-4">
                 <strong class="d-block mb-2"><i class="fas fa-list-ul me-2"></i>目录</strong>
-                {{{articleSingle.toc}}}
+                {{{articleSingle.toc}}   <!-- 已经是 HTML，直接输出 -->
             </nav>
             {{/articleSingle.toc}}
 
+            <!-- 文章内容 -->
             <section class="article-content">
                 {{{articleSingle.contentHtml}}}
+            </section>
+
+            <!-- 分享按钮（可自定义） -->
+            <section class="my-4 d-flex gap-2">
+                <a href="https://service.weibo.com/share/share.php?url=https://{{siteDomain}}/article/{{articleSingle.id}}/{{articleSingle.link}}.html&title={{articleSingle.title}}"
+                   target="_blank" class="btn btn-outline-primary btn-sm"><i class="fab fa-weibo me-1"></i>微博</a>
+
+                <a href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://{{siteDomain}}/article/{{articleSingle.id}}/{{articleSingle.link}}.html&title={{articleSingle.title}}"
+                   target="_blank" class="btn btn-outline-primary btn-sm"><i class="fab fa-qq me-1"></i>QQ空间</a>
+
+                <a href="https://twitter.com/intent/tweet?url=https://{{siteDomain}}/article/{{articleSingle.id}}/{{articleSingle.link}}.html&text={{articleSingle.title}}"
+                   target="_blank" class="btn btn-outline-primary btn-sm"><i class="fab fa-twitter me-1"></i>Twitter</a>
+
+                <a href="javascript:window.print()" class="btn btn-outline-primary btn-sm"><i class="fas fa-print me-1"></i>打印</a>
             </section>
 
             <!-- 上一篇 / 下一篇 -->
@@ -111,7 +205,7 @@
                 {{^articleNewer}}<span></span>{{/articleNewer}}
             </nav>
 
-            <!-- 评论区（你在 OPT.commentCode 中写的代码） -->
+            <!-- 评论区（您在 `OPT.commentCode` 中写的代码） -->
             <section class="mt-5">
                 {{{OPT.commentCode}}}
             </section>
@@ -166,7 +260,71 @@
     </div>
 </footer>
 
+<!-- ==================== 回到顶部按钮 ==================== -->
+<div id="backToTop" title="回到顶部"><i class="fas fa-arrow-up"></i></div>
+
+<!-- ==================== 第三方脚本 ==================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
+
+<script>
+/* ---------- 代码块复制按钮 ---------- */
+document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(codeBlock.innerText);
+            btn.textContent = '已复制';
+            setTimeout(() => (btn.textContent = '复制'), 1500);
+        } catch (e) {
+            console.error(e);
+        }
+    });
+    const pre = codeBlock.parentNode;
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+});
+
+/* ---------- 返回顶部 ---------- */
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) backBtn.style.display = 'flex';
+    else backBtn.style.display = 'none';
+});
+backBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ---------- 图片懒加载（如果你想开启） ---------- */
+if ('IntersectionObserver' in window) {
+    const lazyImages = document.querySelectorAll('img');
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.getAttribute('data-src');
+                if (src) img.src = src;
+                obs.unobserve(img);
+            }
+        });
+    });
+    lazyImages.forEach(img => {
+        const src = img.getAttribute('src');
+        img.setAttribute('data-src', src);
+        img.removeAttribute('src');
+        observer.observe(img);
+    });
+}
+
+/* ---------- 自定义的 Head / Body 代码占位 ---------- */
 {{#OPT.codeBeforBody}}{{.}}{{/OPT.codeBeforBody}}
+</script>
 </body>
 </html>
